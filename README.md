@@ -58,9 +58,21 @@ curl --location --request POST 'http://127.0.0.1:8000/pokemon/' \
 }'
 ```
 
+
+##### Force fetch
+
+Otherwise this is a scheduled job
+
+```
+python manage.py runjobs daily
+```
+
+
 ### Workflow
 Pokemon sent in the request will be checked against the local database first. If not found, a renewal will be 
 
 # To do list (automated testing)
 - create/update new pokemon api testing
-- 
+- add logging in daily job
+- automated test for daily fetch
+- redefine exceptions in daily job

@@ -22,7 +22,7 @@ class PokemonAPIView(APIView):
 
         return Response(serializer.data)
 
-    # create a new pokemon/ update an existing pokemon
+    # create a new pokemon
     def post(self, request):
         '''
         create/update a pokemon
@@ -30,10 +30,6 @@ class PokemonAPIView(APIView):
         
 
         data = JSONParser().parse(request)
-
-        # pk = request.data["name"] # no need to catch exception if not present
-
-
         serializer = PokemonSerializer(data = data)
 
         # create a new pokemon
@@ -41,14 +37,6 @@ class PokemonAPIView(APIView):
             serializer.save()
             return JsonResponse(serializer.data, status = 201)
 
-        # # update a pokemon (if exists)
-        elif pk:
-
-            pokemon = get_object_or_404(Pokemon.objects, pk = pk)
-            serializer = PokemonSerializer(pokemon, data = data)
-            serializer.save()
-            return JsonResponse(serializer.data, status = 201)
-            
         return JsonResponse(serializer.errors, status = 400)
 
 

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dao.apps.DaoConfig',
     'rest_framework',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
