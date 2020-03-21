@@ -35,7 +35,7 @@ def getPokemonDetail(url, lang = "en"):
     try:
         data = json.loads(response.text)["flavor_text_entries"]
 
-        pokemonDescriptions = {i["language"]["name"]: i["flavor_text"] for i in data}
+        pokemonDescriptions = {i["language"]["name"]: translate(i["flavor_text"]) for i in data}
 
         if lang in (pokemonDescriptions.keys()):
             return pokemonDescriptions[lang]
@@ -46,6 +46,31 @@ def getPokemonDetail(url, lang = "en"):
         return {"error": "no flavor_text from %s" % url}
 
     
+def translate(text):
+
+    '''
+    Cannot make more than 5 requests within an hour. Need a handler here
+    '''
+
+    url = "https://api.funtranslations.com/translate/shakespeare"
+
+    payload = {'text': text}
+    files = [
+
+    ]
+    headers = {
+    'Content-Type': 'multipart/form-data;'
+    }
+
+    response = requests.request("POST", url, headers=headers, data = payload, files = files)
+
+    try:
+        return json.loads(response.text)["contents"]["translated"]
+    
+    except:
+        return text
+
+
 def pushPokemonDetailToDb(pokemonData):
 
     url = "http://127.0.0.1:8000/pokemon/"
@@ -55,9 +80,12 @@ def pushPokemonDetailToDb(pokemonData):
     'Content-Type': 'application/json'
     }
 
+
+    # create new record if not exists
     try:
         response = requests.request("POST", url, headers=headers, data = payload)
     
+    # update the existing one otherwise
     except:
         response = requests.request("PUT", url, headers=headers, data = payload)
 
@@ -69,5 +97,6 @@ class Job(DailyJob):
 
     def execute(self):
         
+
         for pokemonData in getPokemonList():
             pushPokemonDetailToDb(pokemonData)
