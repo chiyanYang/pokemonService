@@ -1,2 +1,8 @@
+# vscode folder
 .vscode*
+
+# virtual environment
 venv*
+
+# cache
+*__pycache__*
