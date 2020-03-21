@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
@@ -15,19 +15,54 @@ class PokemonAPIView(APIView):
 
     # display the detail api view based on pokemon primary key
     def get(self, request, pk):
-        pokemons = Pokemon.objects.filter(pk=pk)
-        serializer = PokemonSerializer(pokemons, many = True)
+        # pokemons = Pokemon.objects.filter(pk=pk)
+
+        pokemons = get_object_or_404(Pokemon.objects, pk = pk)
+        serializer = PokemonSerializer(pokemons, many = False)
 
         return Response(serializer.data)
 
-    # create a new pokemon
+    # create a new pokemon/ update an existing pokemon
     def post(self, request):
         '''
-
+        create/update a pokemon
         '''
+        
+
         data = JSONParser().parse(request)
 
+        # pk = request.data["name"] # no need to catch exception if not present
+
+
         serializer = PokemonSerializer(data = data)
+
+        # create a new pokemon
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status = 201)
+
+        # # update a pokemon (if exists)
+        elif pk:
+
+            pokemon = get_object_or_404(Pokemon.objects, pk = pk)
+            serializer = PokemonSerializer(pokemon, data = data)
+            serializer.save()
+            return JsonResponse(serializer.data, status = 201)
+            
+        return JsonResponse(serializer.errors, status = 400)
+
+
+    # update an existing pokemon
+    def put(self, request, pk):
+        
+
+        # get the instance
+        pokemon = get_object_or_404(Pokemon.objects.all(), pk = pk)
+
+        data = JSONParser().parse(request)
+        serializer = PokemonSerializer(pokemon, data = data)
+
+        # update the pokemon
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status = 201)

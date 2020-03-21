@@ -57,3 +57,10 @@ curl --location --request POST 'http://127.0.0.1:8000/pokemon/' \
 	"description": "api desc"
 }'
 ```
+
+### Workflow
+Pokemon sent in the request will be checked against the local database first. If not found, a renewal will be 
+
+# To do list (automated testing)
+- create/update new pokemon api testing
+- 
