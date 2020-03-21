@@ -28,14 +28,21 @@ def getPokemonList():
         return {"error": "no results from %s" % url}
 
 
-def getPokemonDetail(url, lang = "en"):
+
+
+
+def getPokemonDetail(url, lang = "en", translate = False):
 
     response = requests.request("GET", url)
 
     try:
         data = json.loads(response.text)["flavor_text_entries"]
 
-        pokemonDescriptions = {i["language"]["name"]: translate(i["flavor_text"]) for i in data}
+
+        pokemonDescriptions = {
+            i["language"]["name"]: (translate(i["flavor_text"]) if translate else i["flavor_text"])
+            for i in data
+            }
 
         if lang in (pokemonDescriptions.keys()):
             return pokemonDescriptions[lang]
@@ -43,9 +50,11 @@ def getPokemonDetail(url, lang = "en"):
             return {"error": "%s not available" % lang}
     
     except:
-        return {"error": "no flavor_text from %s" % url}
+        return {"error": "no flavor_text_entries from %s" % url}
 
     
+
+
 def translate(text):
 
     '''
@@ -71,6 +80,9 @@ def translate(text):
         return text
 
 
+
+
+
 def pushPokemonDetailToDb(pokemonData):
 
     url = "http://127.0.0.1:8000/pokemon/"
@@ -81,12 +93,12 @@ def pushPokemonDetailToDb(pokemonData):
     }
 
 
+
     # create new record if not exists
-    try:
-        response = requests.request("POST", url, headers=headers, data = payload)
-    
+    response = requests.request("POST", url, headers=headers, data = payload)
+
+    if response.status_code == 400: 
     # update the existing one otherwise
-    except:
         response = requests.request("PUT", url, headers=headers, data = payload)
 
     

@@ -41,13 +41,14 @@ class PokemonAPIView(APIView):
 
 
     # update an existing pokemon
-    def put(self, request, pk):
+    def put(self, request):
         
 
-        # get the instance
-        pokemon = get_object_or_404(Pokemon.objects.all(), pk = pk)
-
         data = JSONParser().parse(request)
+
+        # get the instance
+        pokemon = get_object_or_404(Pokemon.objects.all(), pk = data["name"])
+
         serializer = PokemonSerializer(pokemon, data = data)
 
         # update the pokemon

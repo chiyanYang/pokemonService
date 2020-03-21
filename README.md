@@ -77,3 +77,4 @@ Pokemon sent in the request will be checked against the local database first. If
 - automated test for daily fetch
 - redefine exceptions in daily job
 - pack all urls in daily job into a config file
+- Enable update via POST method
