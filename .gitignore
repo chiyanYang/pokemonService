@@ -1,0 +1,11 @@
+# vscode folder
+.vscode*
+
+# virtual environment
+venv*
+
+# cache
+*__pycache__*
+
+# log
+*.log
